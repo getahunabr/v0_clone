@@ -1,15 +1,26 @@
 // src/inngest/functions.ts
 import { inngest } from "./client";
+import { gemini, createAgent } from "@inngest/agent-kit";
 
 export const processTask = inngest.createFunction(
-  { id: "process-task", triggers: { event: "app/task.created" } },
+  {
+    id: "process-task",
+    triggers: { event: "app/task.created" },
+  },
   async ({ event, step }) => {
-    const result = await step.run("handle-task", async () => {
-      return { processed: true, id: event.data.id };
+    const taskName = event.data.taskName ?? "User";
+
+    const helloAgent = createAgent({
+      name: "hello-Agent",
+      description: "A Simple Agent that Says Hello.",
+      system: "You are a Helpful Assistant. Always greet with Enthusiasm.",
+      model: gemini({
+        model: "gemini-3.6-flash",
+      }),
     });
 
-    await step.sleep("pause", "1s");
+    const { output } = await helloAgent.run(`Say Hello to ${taskName}.`);
 
-    return { message: `Task ${event.data.id} complete`, result };
+    return { message: output[0].content };
   },
 );

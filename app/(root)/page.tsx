@@ -1,6 +1,9 @@
+"use client";
+
 import ProjectForm from "@/modules/home/components/project-form";
 import Image from "next/image";
 import React from "react";
+import { inngest } from "@/inngest/client";
 
 const page = () => {
   return (
@@ -16,6 +19,7 @@ const page = () => {
               className="hidden md:block invert dark:invert-0"
             />
           </div>
+
           <h1 className="text-2xl md:text-5xl font-bold text-center">
             Build Something you ❤️{" "}
           </h1>

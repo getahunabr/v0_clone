@@ -15,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Form, FormField } from "@/components/ui/form";
 import { useCreateProject } from "@/modules/projects/hooks/project";
 
+import { inngest } from "@/inngest/client";
+
 const formSchema = z.object({
   content: z
     .string()
@@ -89,9 +91,35 @@ const ProjectForm = () => {
       console.log(value);
     } catch (error) {}
   };
+
+  const onInvoke = async () => {
+    const res = await fetch("/api/create-task", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: "task_001" }), // or whatever id is relevant here
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to invoke task");
+    }
+
+    return res.json();
+  };
+
+  const onInvokeAI = async () => {
+    try {
+      const res = await onInvoke();
+      console.log(res);
+      toast.success("Done");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="space-y-8">
       {/* {Template Grid} */}
+
+      <button onClick={onInvokeAI}>Invoke AI Agent</button>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {PROJECT_TEMPLATES.map((template, index) => (
           <button
